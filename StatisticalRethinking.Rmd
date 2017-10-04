@@ -1,0 +1,24 @@
+---
+title: "Statistical Rethinking"
+output: html_notebook
+---
+
+
+Install libraries
+```{r}
+# install.packages(c("coda", "mvtnorm", "devtools"))
+# devtools::install_github("rmcelreath/rethinking")
+```
+
+Load libraries
+```{r}
+library(rethinking)
+```
+
+
+```{r}
+sample_mu <- rnorm(1e4, 178, 20)
+sample_sd <- runif(1e4, 0, 50)
+prior_h <- rnorm(1e4, sample_mu, sample_sd)
+dens(prior_h)
+```
