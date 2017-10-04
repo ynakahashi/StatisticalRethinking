@@ -16,9 +16,97 @@ library(rethinking)
 ```
 
 
+Chapter 4
+
+Read data
+```{r}
+data("Howell1")
+d  <- Howell1
+d2 <- d[d$age >= 18, ]
+```
+
+Plot prior distribution of h(height)
 ```{r}
 sample_mu <- rnorm(1e4, 178, 20)
 sample_sd <- runif(1e4, 0, 50)
 prior_h <- rnorm(1e4, sample_mu, sample_sd)
 dens(prior_h)
 ```
+
+R code 4.14 (edited)
+```{r}
+Calc_LogLik <- function(i) {
+   sum(dnorm(d2$height, mean = post$mu[i], sd = post$sd[i], log = TRUE))
+}
+mu_list <- seq(from = 140, to = 160, length.out = 200)
+sd_list <- seq(from = 4, to = 9, length.out = 200)
+post    <- expand.grid(mu = mu_list, sd = sd_list)
+post$LL <- sapply(1:nrow(post), Calc_LogLik)
+
+post$prob    <- post$LL + 
+   dnorm(post$mu, 178, 20, TRUE) + 
+   dunif(post$sd, 0, 50, TRUE)
+post$prob_02 <- exp(post$prob - max(post$prob))
+```
+
+
+```{r}
+contour_xyz(post$mu, post$sd, post$prob)
+```
+
+```{r}
+image_xyz(post$mu, post$sd, post$prob)
+```
+
+
+```{r}
+sample_rows <- sample(1:nrow(post), size = 1e4, replace = TRUE,
+                      prob = post$prob_02)
+sample_mu <- post$mu[sample_rows]
+sample_sd <- post$sd[sample_rows]
+```
+
+
+```{r}
+plot(sample_mu, sample_sd, cex = 0.5, pch = 16, col = col.alpha(rangi2, 0.1))
+```
+
+```{r}
+dens(sample_mu)
+```
+
+```{r}
+dens(sample_sd)
+```
+
+
+```{r}
+HPDI(sample_mu)
+```
+
+```{r}
+HPDI(sample_sd)
+```
+
+
+```{r}
+flist <- alist(
+   height ~ dnorm(mu, sd),
+   mu ~ dnorm(178, 20),
+   sd ~ dunif(0, 50)
+)
+```
+
+```{r}
+m4.1 <- map(flist, data = d2)
+precis(m4.1)
+```
+
+```{r}
+m4.2 <- map(alist(
+   height ~ dnorm(mu, sd),
+   mu ~ dnorm(178, 0.1),
+   sd ~ dunif(0, 50)), data = d2)
+precis(m4.2)
+```
+
