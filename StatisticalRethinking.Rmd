@@ -110,3 +110,44 @@ m4.2 <- map(alist(
 precis(m4.2)
 ```
 
+
+
+```{r}
+plot(d2$height, d2$weight)
+```
+
+
+
+```{r}
+m4.3 <- map(
+   alist(
+      height ~ dnorm(mu, sd),
+      mu <- a + b * weight,
+      a ~ dnorm(156, 100),
+      b ~ dnorm(0, 10),
+      sd ~ dunif(0, 50)
+   ),
+   data = d2
+)
+precis(m4.3, corr = TRUE)
+```
+
+
+```{r}
+d2$weight.c <- d2$weight - mean(d2$weight)
+```
+
+```{r}
+m4.4 <- map(
+   alist(
+      height ~ dnorm(mu, sd),
+      mu <- a + b * weight.c,
+      a ~ dnorm(156, 100),
+      b ~ dnorm(0, 10),
+      sd ~ dunif(0, 50)
+   ),
+   data = d2
+)
+precis(m4.4, corr = TRUE)
+```
+
