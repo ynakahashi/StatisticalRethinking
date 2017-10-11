@@ -312,3 +312,12 @@ lines(weight.seq, mu.mean)
 shade(mu.PI, weight.seq)
 shade(height.PI, weight.seq)
 ```
+
+
+
+
+
+
+
+
+
