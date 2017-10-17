@@ -501,4 +501,38 @@ for(i in 1:nrow(d)) {
 ```
 
 
+```{r}
+N <- 100
+x_real <- rnorm(N)
+x_spur <- rnorm(N, x_real)
+y <- rnorm(N, x_real)
+d <- data.frame(y, x_real, x_spur)
+```
+
+```{r}
+cor(d)
+pairs(d)
+```
+
+```{r}
+model_xx <- map(
+   alist(
+      y ~ dnorm(mu, sd),
+      mu <- a + b1 * x_real + b2 * x_spur,
+      a  ~ dnorm(0, 10),
+      b1 ~ dnorm(0, 1),
+      b2 ~ dnorm(0, 1),
+      sd ~ dunif(0, 10)
+   ), data = d
+)
+precis(model_xx, corr = TRUE)
+```
+
+```{r}
+post <- extract.samples(model_xx, 1e4)
+cor(post)
+pairs(post)
+```
+
+
 
