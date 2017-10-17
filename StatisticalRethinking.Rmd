@@ -3,9 +3,7 @@ title: "Statistical Rethinking"
 output: html_notebook
 ---
 
-
 ### Set up
-
 <i> Install libraries </i>
 ```{r}
 # install.packages(c("coda", "mvtnorm", "devtools"))
@@ -19,7 +17,6 @@ library(rethinking)
 
 
 ### Chapter 4
-
 <i> Read data </i>
 ```{r}
 data("Howell1")
