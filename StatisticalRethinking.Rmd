@@ -464,3 +464,27 @@ shade(A.PI, R.seq)
 ```
 
 
+```{r}
+mu <- link(m5.3)
+
+mu.mean <- apply(mu, 2, mean)
+mu.PI <- apply(mu, 2, PI)
+
+divorce.sim <- sim(m5.3, n = 1e4)
+divorce.PI <- apply(divorce.sim, 2, PI)
+
+plot(mu.mean ~ d$Divorce, col = rangi2, ylim = range(mu.PI),
+     xlab = "Observed divorce", ylab = "Predicted divorce")
+abline(a = 0, b = 1, lty = 2)
+for (i in 1:nrow(d)) {
+   lines(rep(d$Divorce[i], 2), c(mu.PI[1, i], mu.PI[2, i]),
+         col = rangi2)
+}
+identify(x = d$Divorce, y = mu.mean, labels = d$Loc, cex = 0.8)
+```
+
+
+
+
+
+
