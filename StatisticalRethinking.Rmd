@@ -419,7 +419,48 @@ for(i in 1:length(m.resid)) {
 }
 ```
 
+```{r}
+A.avg <- mean(d$MedianAgeMarriage.s)
+R.seq <- seq(from = -3, to = 3, length.out = 30)
+pred.data <- data.frame(
+   Marriage.s <- R.seq,
+   MedianAgeMarriage.s <- A.avg
+)
+
+mu <- link(m5.3, data = pred.data)
+mu.mean <- apply(mu, 2, mean)
+mu.PI <- apply(mu, 2, PI)
+
+R.sim <- sim(m5.3, data = pred.data, n=1e4)
+R.PI <- apply(R.sim, 2, PI)
+
+plot(Divorce ~ Marriage.s, data = d, type = "n")
+lines(R.seq, mu.mean)
+shade(mu.PI, R.seq)
+shade(R.PI, R.seq)
+```
 
 
+```{r}
+R.avg <- mean(d$Marriage.s)
+A.seq <- seq(from = -3, to = 3, length.out = 30)
+pred.data <- data.frame(
+   Marriage.s <- R.avg,
+   MedianAgeMarriage.s <- A.seq
+)
+
+mu <- link(m5.3, data = pred.data)
+mu.mean <- apply(mu, 2, mean)
+mu.PI <- apply(mu, 2, PI)
+
+A.sim <- sim(m5.3, data = pred.data, n=1e4)
+A.PI <- apply(A.sim, 2, PI)
+
+plot(Divorce ~ MedianAgeMarriage.s, data = d, type = "n")
+mtext("Marriage.s = 0")
+lines(A.seq, mu.mean)
+shade(mu.PI, R.seq)
+shade(A.PI, R.seq)
+```
 
 
