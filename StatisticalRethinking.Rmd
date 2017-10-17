@@ -485,6 +485,20 @@ identify(x = d$Divorce, y = mu.mean, labels = d$Loc, cex = 0.8)
 
 
 
+```{r}
+divorce.resid <- d$Divorce - mu.mean
+
+o <- order(divorce.resid)
+
+dotchart(divorce.resid[o], labels = d$Loc[o], xlim = c(-6, 5), cex = 0.6)
+abline(v = 0, col = col.alpha("black", 0.2))
+for(i in 1:nrow(d)) {
+   j <- o[i]
+   lines(d$Divorce[j] - c(mu.PI[1, j], mu.PI[2, j]), rep(i, 2))
+   points(d$Divorce[j] - c(divorce.PI[1, j], divorce.PI[2, j]), rep(i, 2),
+          pch = 3, cex = 0.6, col = "gray")
+}
+```
 
 
 
