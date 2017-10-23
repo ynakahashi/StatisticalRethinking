@@ -606,6 +606,79 @@ m5.6 <- map(
 precis(m5.6, corr = TRUE, digits = 3)
 ```
 
+```{r}
+m5.7 <- map(
+   alist(
+      kcal.per.g ~ dnorm(mu, sd),
+      mu <- a + bn * neocortex.perc + bm * log.mass,
+      a  ~ dnorm(0, 100),
+      bn ~ dnorm(0, 1),
+      bm ~ dnorm(0, 1),
+      sd ~ dunif(0, 1)
+   ), data = dcc
+)
+precis(m5.7, corr = TRUE, digits = 3)
+```
+
+```{r}
+mean.log.mass <- mean(dcc$log.mass)
+np.seq        <- 0:100
+pred.data     <- data.frame(
+   neocortex.perc = np.seq,
+   log.mass = mean.log.mass
+) 
+
+mu      <- link(m5.7, data = pred.data, n = 1e4)
+mu.mean <- apply(mu, 2, mean)
+mu.PI   <- apply(mu, 2, PI)
+
+plot(kcal.per.g ~ neocortex.perc, data = dcc, type = "n")
+lines(np.seq, mu.mean)
+lines(np.seq, mu.PI[1, ], lty = 2)
+lines(np.seq, mu.PI[2, ], lty = 2)
+```
+
+```{r}
+mean.neocortex.perc <- mean(dcc$neocortex.perc)
+np.seq        <- seq(from = -3, to = 4, length.out = 101)
+pred.data     <- data.frame(
+   log.mass = np.seq,
+   neocortex.perc = mean.neocortex.perc
+) 
+
+mu      <- link(m5.7, data = pred.data, n = 1e4)
+mu.mean <- apply(mu, 2, mean)
+mu.PI   <- apply(mu, 2, PI)
+
+plot(kcal.per.g ~ log.mass, data = dcc, type = "n")
+lines(np.seq, mu.mean)
+lines(np.seq, mu.PI[1, ], lty = 2)
+lines(np.seq, mu.PI[2, ], lty = 2)
+```
+
+```{r}
+N     <- 100
+rho   <- 0.7
+x_pos <- rnorm(N)
+x_neg <- rnorm(N, rho * x_pos, sqrt(1 - rho^2))
+y     <- rnorm(N, x_pos - x_neg)
+d     <- data.frame(y, x_pos, x_neg)
+```
+
+```{r}
+pairs(d)
+```
+
+
+```{r}
+lm(y ~ x_pos, d)
+lm(y ~ x_neg, d)
+```
+
+
+
+
+
 
 
 
