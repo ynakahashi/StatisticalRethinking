@@ -675,7 +675,9 @@ lm(y ~ x_pos, d)
 lm(y ~ x_neg, d)
 ```
 
-
+```{r}
+lm(y ~ x_pos + x_neg, d)
+```
 
 
 
