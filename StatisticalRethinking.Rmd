@@ -533,3 +533,79 @@ pairs(post)
 
 
 
+```{r}
+data(milk)
+d <- milk
+str(d)
+```
+
+```{r}
+m5.5 <- map(
+   alist(
+      kcal.per.g ~ dnorm(mu, sd),
+      mu <- a + bn * neocortex.perc,
+      a  ~ dnorm(0, 100),
+      bn ~ dnorm(0, 1),
+      sd ~ dunif(0, 1)
+   ), data = d
+)
+```
+
+
+```{r}
+d$neocortex.perc
+```
+
+```{r}
+dcc <- d[complete.cases(d), ]
+```
+
+```{r}
+m5.5 <- map(
+   alist(
+      kcal.per.g ~ dnorm(mu, sd),
+      mu <- a + bn * neocortex.perc,
+      a  ~ dnorm(0, 100),
+      bn ~ dnorm(0, 1),
+      sd ~ dunif(0, 1)
+   ), data = dcc
+)
+precis(m5.5, corr = TRUE, digits = 3)
+```
+
+```{r}
+coef(m5.5)["bn"] * (max(dcc$neocortex.perc) - min(dcc$neocortex.perc))
+```
+
+```{r}
+np.seq    <- 0:100
+pred.data <- data.frame(neocortex.perc = np.seq)
+
+mu      <- link(m5.5, data = pred.data, n = 1e4)
+mu.mean <- apply(mu, 2, mean)
+mu.PI   <- apply(mu, 2, PI)
+
+plot(kcal.per.g ~ neocortex.perc, data = dcc, col = rangi2)
+lines(np.seq, mu.mean)
+lines(np.seq, mu.PI[1, ], lty = 2)
+lines(np.seq, mu.PI[2, ], lty = 2)
+```
+
+
+```{r}
+dcc$log.mass <- log(dcc$mass)
+m5.6 <- map(
+   alist(
+      kcal.per.g ~ dnorm(mu, sd),
+      mu <- a + bm * log.mass,
+      a  ~ dnorm(0, 100),
+      bm ~ dnorm(0, 1),
+      sd ~ dunif(0, 1)
+   ), data = dcc
+)
+precis(m5.6, corr = TRUE, digits = 3)
+```
+
+
+
+
