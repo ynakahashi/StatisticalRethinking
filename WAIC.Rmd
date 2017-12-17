@@ -19,15 +19,18 @@ p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
 $$
 である。
 $Pr(y_{i})$および$V(y_{i})$はそれぞれ観測値iの事後分布から得られる
-<b>平均尤度</b>および<b>対数尤度の分散</b>を表すものとする。
+<b>平均対数尤度</b>および<b>対数尤度の分散</b>を表すものとする。
 
 ### シミュレーション
 勉強のために、簡単な数値例を発生させてそのWAICを計算する。
 パラメータの推定およびMCMCサンプリングにはstanを利用する。
 
 ```{r}
+work_dir <- "/Users/nakahashi/Desktop/GitTest/StatisticalRethinking"
+setwd(work_dir)
 library(tidyverse)
 ```
+
 ```{r}
 # シミュレーションデータの発生
 set.seed(123)
@@ -49,9 +52,95 @@ options(mc.cores = parallel::detectCores())
 ```
 
 ```{r}
-
+dat_stan <- list(
+   N = N,
+   X = D$X,
+   Y = D$Y
+)
 ```
 
+```{r}
+fit_01 <- stan(file = './WAIC.stan', 
+               data = dat_stan, 
+               iter = 3000,
+               chains = 4,
+               seed = 1234)
+```
+
+```{r}
+summary(fit_01)$summary
+```
+
+```{r}
+summary(fit_01)$summary["b1", c("mean", "50%")]
+exp(summary(fit_01)$summary["log_var_err", c("mean", "50%")])
+```
+
+
+### WAICの計算
+#### lppd
+lppdは前述した通り以下によって計算される：
+$$
+lppd = \sum_{i = 1}^{N}\log{Pr(y_{i})}
+$$
+
+stanの結果からposterior sampleを得る。
+warmupを特に指定していないためsampleサイズ（ite）の半分が切り捨てられた結果、
+6,000サンプルが保存される。
+
+```{r}
+post_samples <- extract(fit_01)
+str(post_samples)
+```
+
+
+この6000サンプルをパラメータとして与えた時の各$y_{i}$の対数尤度を求める：
+
+```{r}
+Des <- cbind(1, X)
+B   <- cbind(post_samples$b0, post_samples$b1)
+tmp <- matrix(NA, length(post_samples$b0), N)
+for (i in 1:N) {
+   tmp[, i] <- dnorm(Y[i], mean = B %*% Des[i, ], 
+                     sd = exp(post_samples$log_var_err))
+}
+lppd <- sum(colMeans(log(tmp)))
+```
+
+#### $p_{WAIC}$
+$$
+p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
+$$
+
+```{r}
+pwaic <- sum(apply(log(tmp), 2, var))
+```
+
+#### WAIC
+```{r}
+WAIC <- -2 * (lppd + pwaic)
+```
+
+```{r}
+library(rethinking)
+fit_02 <- map(
+   alist(
+      Y ~ dnorm(b0 + b1 * X, log_var_err),
+      b0 ~ dunif(-10, 10),
+      b1 ~ dunif(-5, 5),
+      log_var_err ~ dunif(0, 10)
+   ), data = D)
+```
+
+```{r}
+WAIC(fit_02)
+```
+
+```{r}
+cat("WAIC:", WAIC, "\n")
+cat("lppd:", lppd, "\n")
+cat("pwaic:", pwaic, "\n")
+```
 
 
 

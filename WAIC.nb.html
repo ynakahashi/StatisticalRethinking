@@ -182,29 +182,23 @@ WAIC = -2(lppd - p_{WAIC})
 lppd = \sum_{i = 1}^{N}\log{Pr(y_{i})}
 \]</span> であり、また <span class="math display">\[
 p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
-\]</span> である。 <span class="math inline">\(Pr(y_{i})\)</span>および<span class="math inline">\(V(y_{i})\)</span>はそれぞれ観測値iの事後分布から得られる <b>平均尤度</b>および<b>対数尤度の分散</b>を表すものとする。</p>
+\]</span> である。 <span class="math inline">\(Pr(y_{i})\)</span>および<span class="math inline">\(V(y_{i})\)</span>はそれぞれ観測値iの事後分布から得られる <b>平均対数尤度</b>および<b>対数尤度の分散</b>を表すものとする。</p>
 </div>
 <div class="section level3">
 <h3>シミュレーション</h3>
 <p>勉強のために、簡単な数値例を発生させてそのWAICを計算する。 パラメータの推定およびMCMCサンプリングにはstanを利用する。</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5cbmBgYCJ9 -->
-<pre class="r"><code>library(tidyverse)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0d2Qod29ya19kaXIpXG5cbmBgYCJ9 -->
+<pre class="r"><code>setwd(work_dir)
 </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyB0aWR5dmVyc2U6IGdncGxvdDJcbkxvYWRpbmcgdGlkeXZlcnNlOiB0aWJibGVcbkxvYWRpbmcgdGlkeXZlcnNlOiB0aWR5clxuTG9hZGluZyB0aWR5dmVyc2U6IHJlYWRyXG5Mb2FkaW5nIHRpZHl2ZXJzZTogcHVycnJcbkxvYWRpbmcgdGlkeXZlcnNlOiBkcGx5clxuQ29uZmxpY3RzIHdpdGggdGlkeSBwYWNrYWdlcyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbmZpbHRlcigpOiBkcGx5ciwgc3RhdHNcbmxhZygpOiAgICBkcGx5ciwgc3RhdHNcbiJ9 -->
-<pre><code>Loading tidyverse: ggplot2
-Loading tidyverse: tibble
-Loading tidyverse: tidyr
-Loading tidyverse: readr
-Loading tidyverse: purrr
-Loading tidyverse: dplyr
-Conflicts with tidy packages ---------------------------------------------------
-filter(): dplyr, stats
-lag():    dplyr, stats</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdhcyBjaGFuZ2VkIHRvIC9Vc2Vycy9uYWthaGFzaGkvRGVza3RvcC9HaXRUZXN0L1RyeVJzdGFuIGluc2lkZSBhIG5vdGVib29rIGNodW5rLiBUaGUgd29ya2luZyBkaXJlY3Rvcnkgd2lsbCBiZSByZXNldCB3aGVuIHRoZSBjaHVuayBpcyBmaW5pc2hlZCBydW5uaW5nLiBVc2UgdGhlIGtuaXRyIHJvb3QuZGlyIG9wdGlvbiBpbiB0aGUgc2V0dXAgY2h1bmsgdG8gY2hhbmdlIHRoZSB3b3JraW5nIGRpcmVjdG9yeSBmb3Igbm90ZWJvb2sgY2h1bmtzLlxuIn0= -->
+<pre><code>The working directory was changed to /Users/nakahashi/Desktop/GitTest/TryRstan inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 
 <!-- rnb-html-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImtuaXRfYXNpcyJdLCJzaXppbmdQb2xpY3kiOltdfX0= -->
@@ -252,9 +246,25 @@ lag():    dplyr, stats</code></pre>
 <p>このデータに対して{rstan}による線形回帰モデルを当てはめる</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyc3RhbilcbnJzdGFuX29wdGlvbnMoYXV0b193cml0ZSA9IFRSVUUpXG5vcHRpb25zKG1jLmNvcmVzID0gcGFyYWxsZWw6OmRldGVjdENvcmVzKCkpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyc3RhbilcblxuYGBgIn0= -->
 <pre class="r"><code>library(rstan)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiIOimgeaxguOBleOCjOOBn+ODkeODg+OCseODvOOCuCBTdGFuSGVhZGVycyDjgpLjg63jg7zjg4nkuK3jgafjgZkgXG5yc3RhbiAoVmVyc2lvbiAyLjE2LjIsIHBhY2thZ2VkOiAyMDE3LTA3LTAzIDA5OjI0OjU4IFVUQywgR2l0UmV2OiAyZTFmOTEzZDNjYTMpXG5Gb3IgZXhlY3V0aW9uIG9uIGEgbG9jYWwsIG11bHRpY29yZSBDUFUgd2l0aCBleGNlc3MgUkFNIHdlIHJlY29tbWVuZCBjYWxsaW5nXG5yc3Rhbl9vcHRpb25zKGF1dG9fd3JpdGUgPSBUUlVFKVxub3B0aW9ucyhtYy5jb3JlcyA9IHBhcmFsbGVsOjpkZXRlY3RDb3JlcygpKVxuXG4g5qyh44Gu44OR44OD44Kx44O844K444KS5LuY44GR5Yqg44GI44G+44GZOiDigJhyc3RhbuKAmSBcblxuIOS7peS4i+OBruOCquODluOCuOOCp+OCr+ODiOOBryDigJhwYWNrYWdlOnRpZHly4oCZIOOBi+OCieODnuOCueOCr+OBleOCjOOBpuOBhOOBvuOBmTogXG5cbiAgICAgZXh0cmFjdCBcbiJ9 -->
+<pre><code> 要求されたパッケージ StanHeaders をロード中です 
+rstan (Version 2.16.2, packaged: 2017-07-03 09:24:58 UTC, GitRev: 2e1f913d3ca3)
+For execution on a local, multicore CPU with excess RAM we recommend calling
 rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+ 次のパッケージを付け加えます: ‘rstan’ 
+
+ 以下のオブジェクトは ‘package:tidyr’ からマスクされています: 
+
+     extract </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucnN0YW5fb3B0aW9ucyhhdXRvX3dyaXRlID0gVFJVRSlcbm9wdGlvbnMobWMuY29yZXMgPSBwYXJhbGxlbDo6ZGV0ZWN0Q29yZXMoKSlcbmBgYCJ9 -->
+<pre class="r"><code>rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -264,9 +274,324 @@ options(mc.cores = parallel::detectCores())</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZml0XzAxIDwtIHN0YW4oZmlsZSA9ICcuL1dBSUMuc3RhbicsIFxuICAgICAgICAgICAgICAgZGF0YSA9IGRhdF9zdGFuLCBcbiAgICAgICAgICAgICAgIGl0ZXIgPSAzMDAwLFxuICAgICAgICAgICAgICAgY2hhaW5zID0gNCxcbiAgICAgICAgICAgICAgIHNlZWQgPSAxMjM0KVxuXG5gYGAifQ== -->
+<pre class="r"><code>fit_01 &lt;- stan(file = './WAIC.stan', 
+               data = dat_stan, 
+               iter = 3000,
+               chains = 4,
+               seed = 1234)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoic3RhcnRpbmcgd29ya2VyIHBpZD03ODkwMSBvbiBsb2NhbGhvc3Q6MTE5MTIgYXQgMTU6MTM6MjIuNjYzXG5zdGFydGluZyB3b3JrZXIgcGlkPTc4OTA5IG9uIGxvY2FsaG9zdDoxMTkxMiBhdCAxNToxMzoyMi45NTdcbnN0YXJ0aW5nIHdvcmtlciBwaWQ9Nzg5MTcgb24gbG9jYWxob3N0OjExOTEyIGF0IDE1OjEzOjIzLjI0Nlxuc3RhcnRpbmcgd29ya2VyIHBpZD03ODkyNSBvbiBsb2NhbGhvc3Q6MTE5MTIgYXQgMTU6MTM6MjMuNTY0XG5cblNBTVBMSU5HIEZPUiBNT0RFTCAnV0FJQycgTk9XIChDSEFJTiAxKS5cblxuR3JhZGllbnQgZXZhbHVhdGlvbiB0b29rIDIuMmUtMDUgc2Vjb25kc1xuMTAwMCB0cmFuc2l0aW9ucyB1c2luZyAxMCBsZWFwZnJvZyBzdGVwcyBwZXIgdHJhbnNpdGlvbiB3b3VsZCB0YWtlIDAuMjIgc2Vjb25kcy5cbkFkanVzdCB5b3VyIGV4cGVjdGF0aW9ucyBhY2NvcmRpbmdseSFcblxuXG5JdGVyYXRpb246ICAgIDEgLyAzMDAwIFsgIDAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogIDMwMCAvIDMwMDAgWyAxMCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAgNjAwIC8gMzAwMCBbIDIwJV0gIChXYXJtdXApXG5JdGVyYXRpb246ICA5MDAgLyAzMDAwIFsgMzAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogMTIwMCAvIDMwMDAgWyA0MCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAxNTAwIC8gMzAwMCBbIDUwJV0gIChXYXJtdXApXG5JdGVyYXRpb246IDE1MDEgLyAzMDAwIFsgNTAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAxODAwIC8gMzAwMCBbIDYwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMjEwMCAvIDMwMDAgWyA3MCVdICAoU2FtcGxpbmcpXG5JdGVyYXRpb246IDI0MDAgLyAzMDAwIFsgODAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAyNzAwIC8gMzAwMCBbIDkwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMzAwMCAvIDMwMDAgWzEwMCVdICAoU2FtcGxpbmcpXG5cbiBFbGFwc2VkIFRpbWU6IDAuMDY5Nzk2IHNlY29uZHMgKFdhcm0tdXApXG4gICAgICAgICAgICAgICAwLjEwNzY0MiBzZWNvbmRzIChTYW1wbGluZylcbiAgICAgICAgICAgICAgIDAuMTc3NDM4IHNlY29uZHMgKFRvdGFsKVxuXG5cblNBTVBMSU5HIEZPUiBNT0RFTCAnV0FJQycgTk9XIChDSEFJTiAyKS5cblxuR3JhZGllbnQgZXZhbHVhdGlvbiB0b29rIDIuNWUtMDUgc2Vjb25kc1xuMTAwMCB0cmFuc2l0aW9ucyB1c2luZyAxMCBsZWFwZnJvZyBzdGVwcyBwZXIgdHJhbnNpdGlvbiB3b3VsZCB0YWtlIDAuMjUgc2Vjb25kcy5cbkFkanVzdCB5b3VyIGV4cGVjdGF0aW9ucyBhY2NvcmRpbmdseSFcblxuXG5JdGVyYXRpb246ICAgIDEgLyAzMDAwIFsgIDAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogIDMwMCAvIDMwMDAgWyAxMCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAgNjAwIC8gMzAwMCBbIDIwJV0gIChXYXJtdXApXG5JdGVyYXRpb246ICA5MDAgLyAzMDAwIFsgMzAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogMTIwMCAvIDMwMDAgWyA0MCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAxNTAwIC8gMzAwMCBbIDUwJV0gIChXYXJtdXApXG5JdGVyYXRpb246IDE1MDEgLyAzMDAwIFsgNTAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAxODAwIC8gMzAwMCBbIDYwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMjEwMCAvIDMwMDAgWyA3MCVdICAoU2FtcGxpbmcpXG5JdGVyYXRpb246IDI0MDAgLyAzMDAwIFsgODAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAyNzAwIC8gMzAwMCBbIDkwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMzAwMCAvIDMwMDAgWzEwMCVdICAoU2FtcGxpbmcpXG5cbiBFbGFwc2VkIFRpbWU6IDAuMDY2NjI5IHNlY29uZHMgKFdhcm0tdXApXG4gICAgICAgICAgICAgICAwLjA2MjczOSBzZWNvbmRzIChTYW1wbGluZylcbiAgICAgICAgICAgICAgIDAuMTI5MzY4IHNlY29uZHMgKFRvdGFsKVxuXG5cblNBTVBMSU5HIEZPUiBNT0RFTCAnV0FJQycgTk9XIChDSEFJTiAzKS5cblxuR3JhZGllbnQgZXZhbHVhdGlvbiB0b29rIDIuMmUtMDUgc2Vjb25kc1xuMTAwMCB0cmFuc2l0aW9ucyB1c2luZyAxMCBsZWFwZnJvZyBzdGVwcyBwZXIgdHJhbnNpdGlvbiB3b3VsZCB0YWtlIDAuMjIgc2Vjb25kcy5cbkFkanVzdCB5b3VyIGV4cGVjdGF0aW9ucyBhY2NvcmRpbmdseSFcblxuXG5JdGVyYXRpb246ICAgIDEgLyAzMDAwIFsgIDAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogIDMwMCAvIDMwMDAgWyAxMCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAgNjAwIC8gMzAwMCBbIDIwJV0gIChXYXJtdXApXG5JdGVyYXRpb246ICA5MDAgLyAzMDAwIFsgMzAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogMTIwMCAvIDMwMDAgWyA0MCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAxNTAwIC8gMzAwMCBbIDUwJV0gIChXYXJtdXApXG5JdGVyYXRpb246IDE1MDEgLyAzMDAwIFsgNTAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAxODAwIC8gMzAwMCBbIDYwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMjEwMCAvIDMwMDAgWyA3MCVdICAoU2FtcGxpbmcpXG5JdGVyYXRpb246IDI0MDAgLyAzMDAwIFsgODAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAyNzAwIC8gMzAwMCBbIDkwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMzAwMCAvIDMwMDAgWzEwMCVdICAoU2FtcGxpbmcpXG5cbiBFbGFwc2VkIFRpbWU6IDAuMDc0NTIxIHNlY29uZHMgKFdhcm0tdXApXG4gICAgICAgICAgICAgICAwLjA5MDExNSBzZWNvbmRzIChTYW1wbGluZylcbiAgICAgICAgICAgICAgIDAuMTY0NjM2IHNlY29uZHMgKFRvdGFsKVxuXG5cblNBTVBMSU5HIEZPUiBNT0RFTCAnV0FJQycgTk9XIChDSEFJTiA0KS5cblxuR3JhZGllbnQgZXZhbHVhdGlvbiB0b29rIDIuMmUtMDUgc2Vjb25kc1xuMTAwMCB0cmFuc2l0aW9ucyB1c2luZyAxMCBsZWFwZnJvZyBzdGVwcyBwZXIgdHJhbnNpdGlvbiB3b3VsZCB0YWtlIDAuMjIgc2Vjb25kcy5cbkFkanVzdCB5b3VyIGV4cGVjdGF0aW9ucyBhY2NvcmRpbmdseSFcblxuXG5JdGVyYXRpb246ICAgIDEgLyAzMDAwIFsgIDAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogIDMwMCAvIDMwMDAgWyAxMCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAgNjAwIC8gMzAwMCBbIDIwJV0gIChXYXJtdXApXG5JdGVyYXRpb246ICA5MDAgLyAzMDAwIFsgMzAlXSAgKFdhcm11cClcbkl0ZXJhdGlvbjogMTIwMCAvIDMwMDAgWyA0MCVdICAoV2FybXVwKVxuSXRlcmF0aW9uOiAxNTAwIC8gMzAwMCBbIDUwJV0gIChXYXJtdXApXG5JdGVyYXRpb246IDE1MDEgLyAzMDAwIFsgNTAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAxODAwIC8gMzAwMCBbIDYwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMjEwMCAvIDMwMDAgWyA3MCVdICAoU2FtcGxpbmcpXG5JdGVyYXRpb246IDI0MDAgLyAzMDAwIFsgODAlXSAgKFNhbXBsaW5nKVxuSXRlcmF0aW9uOiAyNzAwIC8gMzAwMCBbIDkwJV0gIChTYW1wbGluZylcbkl0ZXJhdGlvbjogMzAwMCAvIDMwMDAgWzEwMCVdICAoU2FtcGxpbmcpXG5cbiBFbGFwc2VkIFRpbWU6IDAuMDcwOTUxIHNlY29uZHMgKFdhcm0tdXApXG4gICAgICAgICAgICAgICAwLjEzMjU4NSBzZWNvbmRzIChTYW1wbGluZylcbiAgICAgICAgICAgICAgIDAuMjAzNTM2IHNlY29uZHMgKFRvdGFsKVxuIn0= -->
+<pre><code>starting worker pid=78901 on localhost:11912 at 15:13:22.663
+starting worker pid=78909 on localhost:11912 at 15:13:22.957
+starting worker pid=78917 on localhost:11912 at 15:13:23.246
+starting worker pid=78925 on localhost:11912 at 15:13:23.564
+
+SAMPLING FOR MODEL 'WAIC' NOW (CHAIN 1).
+
+Gradient evaluation took 2.2e-05 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Adjust your expectations accordingly!
+
+
+Iteration:    1 / 3000 [  0%]  (Warmup)
+Iteration:  300 / 3000 [ 10%]  (Warmup)
+Iteration:  600 / 3000 [ 20%]  (Warmup)
+Iteration:  900 / 3000 [ 30%]  (Warmup)
+Iteration: 1200 / 3000 [ 40%]  (Warmup)
+Iteration: 1500 / 3000 [ 50%]  (Warmup)
+Iteration: 1501 / 3000 [ 50%]  (Sampling)
+Iteration: 1800 / 3000 [ 60%]  (Sampling)
+Iteration: 2100 / 3000 [ 70%]  (Sampling)
+Iteration: 2400 / 3000 [ 80%]  (Sampling)
+Iteration: 2700 / 3000 [ 90%]  (Sampling)
+Iteration: 3000 / 3000 [100%]  (Sampling)
+
+ Elapsed Time: 0.069796 seconds (Warm-up)
+               0.107642 seconds (Sampling)
+               0.177438 seconds (Total)
+
+
+SAMPLING FOR MODEL 'WAIC' NOW (CHAIN 2).
+
+Gradient evaluation took 2.5e-05 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
+Adjust your expectations accordingly!
+
+
+Iteration:    1 / 3000 [  0%]  (Warmup)
+Iteration:  300 / 3000 [ 10%]  (Warmup)
+Iteration:  600 / 3000 [ 20%]  (Warmup)
+Iteration:  900 / 3000 [ 30%]  (Warmup)
+Iteration: 1200 / 3000 [ 40%]  (Warmup)
+Iteration: 1500 / 3000 [ 50%]  (Warmup)
+Iteration: 1501 / 3000 [ 50%]  (Sampling)
+Iteration: 1800 / 3000 [ 60%]  (Sampling)
+Iteration: 2100 / 3000 [ 70%]  (Sampling)
+Iteration: 2400 / 3000 [ 80%]  (Sampling)
+Iteration: 2700 / 3000 [ 90%]  (Sampling)
+Iteration: 3000 / 3000 [100%]  (Sampling)
+
+ Elapsed Time: 0.066629 seconds (Warm-up)
+               0.062739 seconds (Sampling)
+               0.129368 seconds (Total)
+
+
+SAMPLING FOR MODEL 'WAIC' NOW (CHAIN 3).
+
+Gradient evaluation took 2.2e-05 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Adjust your expectations accordingly!
+
+
+Iteration:    1 / 3000 [  0%]  (Warmup)
+Iteration:  300 / 3000 [ 10%]  (Warmup)
+Iteration:  600 / 3000 [ 20%]  (Warmup)
+Iteration:  900 / 3000 [ 30%]  (Warmup)
+Iteration: 1200 / 3000 [ 40%]  (Warmup)
+Iteration: 1500 / 3000 [ 50%]  (Warmup)
+Iteration: 1501 / 3000 [ 50%]  (Sampling)
+Iteration: 1800 / 3000 [ 60%]  (Sampling)
+Iteration: 2100 / 3000 [ 70%]  (Sampling)
+Iteration: 2400 / 3000 [ 80%]  (Sampling)
+Iteration: 2700 / 3000 [ 90%]  (Sampling)
+Iteration: 3000 / 3000 [100%]  (Sampling)
+
+ Elapsed Time: 0.074521 seconds (Warm-up)
+               0.090115 seconds (Sampling)
+               0.164636 seconds (Total)
+
+
+SAMPLING FOR MODEL 'WAIC' NOW (CHAIN 4).
+
+Gradient evaluation took 2.2e-05 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Adjust your expectations accordingly!
+
+
+Iteration:    1 / 3000 [  0%]  (Warmup)
+Iteration:  300 / 3000 [ 10%]  (Warmup)
+Iteration:  600 / 3000 [ 20%]  (Warmup)
+Iteration:  900 / 3000 [ 30%]  (Warmup)
+Iteration: 1200 / 3000 [ 40%]  (Warmup)
+Iteration: 1500 / 3000 [ 50%]  (Warmup)
+Iteration: 1501 / 3000 [ 50%]  (Sampling)
+Iteration: 1800 / 3000 [ 60%]  (Sampling)
+Iteration: 2100 / 3000 [ 70%]  (Sampling)
+Iteration: 2400 / 3000 [ 80%]  (Sampling)
+Iteration: 2700 / 3000 [ 90%]  (Sampling)
+Iteration: 3000 / 3000 [100%]  (Sampling)
+
+ Elapsed Time: 0.070951 seconds (Warm-up)
+               0.132585 seconds (Sampling)
+               0.203536 seconds (Total)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiIOitpuWRiuODoeODg+OCu+ODvOOCuDogXG4g6K2m5ZGK44Oh44OD44K744O844K4OiBcbiBhcy5QT1NJWGx0LlBPU0lYY3QoeCwgdHopIOOBpzogIGFzLlBPU0lYbHQuUE9TSVhjdCh4LCB0eikg44GnOiAgdW5rbm93biB0aW1lem9uZSAnZGVmYXVsdC9Bc2lhL1Rva3lvJ1xuIHVua25vd24gdGltZXpvbmUgJ2RlZmF1bHQvQXNpYS9Ub2t5bydcbiDorablkYrjg6Hjg4Pjgrvjg7zjgrg6IFxuIGFzLlBPU0lYbHQuUE9TSVhjdCh4LCB0eikg44GnOiAgdW5rbm93biB0aW1lem9uZSAnZGVmYXVsdC9Bc2lhL1Rva3lvJ1xuIOitpuWRiuODoeODg+OCu+ODvOOCuDogXG4gYXMuUE9TSVhsdC5QT1NJWGN0KHgsIHR6KSDjgac6ICB1bmtub3duIHRpbWV6b25lICdkZWZhdWx0L0FzaWEvVG9reW8nXG4ifQ== -->
+<pre><code> 警告メッセージ: 
+ 警告メッセージ: 
+ as.POSIXlt.POSIXct(x, tz) で:  as.POSIXlt.POSIXct(x, tz) で:  unknown timezone 'default/Asia/Tokyo'
+ unknown timezone 'default/Asia/Tokyo'
+ 警告メッセージ: 
+ as.POSIXlt.POSIXct(x, tz) で:  unknown timezone 'default/Asia/Tokyo'
+ 警告メッセージ: 
+ as.POSIXlt.POSIXct(x, tz) で:  unknown timezone 'default/Asia/Tokyo'</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShmaXRfMDEpJHN1bW1hcnlcblxuYGBgIn0= -->
+<pre class="r"><code>summary(fit_01)$summary
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgICAgICBtZWFuICAgICAgc2VfbWVhbiAgICAgICAgIHNkICAgICAgICAyLjUlICAgICAgICAgMjUlXG5iMCAgICAgICAgICAgIDIuODk4NTc2NjUgMC4wMDEyOTQzNTk4IDAuMDk4NzY0MTEgICAyLjcwMzYxMTEgICAyLjgzMDQzNjFcbmIxICAgICAgICAgICAgMS4xNDU5MDk2OCAwLjAwMTM5MTQyNzYgMC4xMDc3Nzk1MiAgIDAuOTM1NjA2OSAgIDEuMDcxMzYyNlxubG9nX3Zhcl9lcnIgIC0wLjAyNDMxNDY5IDAuMDAwOTQ3ODYwOCAwLjA3MTc5NTUyICAtMC4xNTcyNjk5ICAtMC4wNzQ1ODI0XG5scF9fICAgICAgICAtNDcuNTQxMzg0NzEgMC4wMjIyMzgxNzA5IDEuMjE0NjIyNjkgLTUwLjY3MTcwOTQgLTQ4LjA4Nzg1MTBcbiAgICAgICAgICAgICAgICAgICAgIDUwJSAgICAgICAgICA3NSUgICAgICAgOTcuNSUgICAgbl9lZmYgICAgICBSaGF0XG5iMCAgICAgICAgICAgIDIuODk5ODE1NzUgICAyLjk2NTQ1NTA3ICAgMy4wODY4ODMxIDU4MjIuMjE1IDAuOTk5OTk1M1xuYjEgICAgICAgICAgICAxLjE0MjkzNDc1ICAgMS4yMTk3MTEwMCAgIDEuMzU3NzY2NCA2MDAwLjAwMCAwLjk5OTk4ODFcbmxvZ192YXJfZXJyICAtMC4wMjcxNjYwNSAgIDAuMDI0ODIzNjkgICAwLjExOTUzMzggNTczNy4yNzQgMS4wMDAzMDgxXG5scF9fICAgICAgICAtNDcuMjQyMTE2MDcgLTQ2LjY0NzY2MTA3IC00Ni4xNDAxMDk5IDI5ODMuMjE2IDEuMDAwOTY5MVxuIn0= -->
+<pre><code>                    mean      se_mean         sd        2.5%         25%
+b0            2.89857665 0.0012943598 0.09876411   2.7036111   2.8304361
+b1            1.14590968 0.0013914276 0.10777952   0.9356069   1.0713626
+log_var_err  -0.02431469 0.0009478608 0.07179552  -0.1572699  -0.0745824
+lp__        -47.54138471 0.0222381709 1.21462269 -50.6717094 -48.0878510
+                     50%          75%       97.5%    n_eff      Rhat
+b0            2.89981575   2.96545507   3.0868831 5822.215 0.9999953
+b1            1.14293475   1.21971100   1.3577664 6000.000 0.9999881
+log_var_err  -0.02716605   0.02482369   0.1195338 5737.274 1.0003081
+lp__        -47.24211607 -46.64766107 -46.1401099 2983.216 1.0009691</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShmaXRfMDEpJHN1bW1hcnlbXCJiMVwiLCBjKFwibWVhblwiLCBcIjUwJVwiKV1cblxuYGBgIn0= -->
+<pre class="r"><code>summary(fit_01)$summary[&quot;b1&quot;, c(&quot;mean&quot;, &quot;50%&quot;)]
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgIG1lYW4gICAgICA1MCUgXG4xLjE0NTkxMCAxLjE0MjkzNSBcbiJ9 -->
+<pre><code>    mean      50% 
+1.145910 1.142935 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXhwKHN1bW1hcnkoZml0XzAxKSRzdW1tYXJ5W1wibG9nX3Zhcl9lcnJcIiwgYyhcIm1lYW5cIiwgXCI1MCVcIildKVxuYGBgIn0= -->
+<pre class="r"><code>exp(summary(fit_01)$summary[&quot;log_var_err&quot;, c(&quot;mean&quot;, &quot;50%&quot;)])</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICBtZWFuICAgICAgIDUwJSBcbjAuOTc1OTc4NSAwLjk3MzE5OTYgXG4ifQ== -->
+<pre><code>     mean       50% 
+0.9759785 0.9731996 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="waic" class="section level3">
+<h3>WAICの計算</h3>
+<div id="lppd" class="section level4">
+<h4>lppd</h4>
+<p>lppdは前述した通り以下によって計算される： <span class="math display">\[
+lppd = \sum_{i = 1}^{N}\log{Pr(y_{i})}
+\]</span></p>
+<p>stanの結果からposterior sampleを得る。 warmupを特に指定していないためsampleサイズ（ite）の半分が切り捨てられた結果、 6,000サンプルが保存される。</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9zdF9zYW1wbGVzIDwtIGV4dHJhY3QoZml0XzAxKVxuc3RyKHBvc3Rfc2FtcGxlcylcbmBgYCJ9 -->
+<pre class="r"><code>post_samples &lt;- extract(fit_01)
+str(post_samples)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>この6000サンプルをパラメータとして与えた時の各<span class="math inline">\(y_{i}\)</span>の対数尤度を求める：</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29sTWVhbnMobG9nKHRtcCkpXG5cbmBgYCJ9 -->
+<pre class="r"><code>colMeans(log(tmp))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICBbMV0gLTEuMTE5MTQ3OSAtMC45NjM3MjM0IC0wLjkxNDM5MzQgLTAuOTMwNzkzNCAtMS4yNzY3Mzg4IC0wLjkyNzEzMjRcbiAgWzddIC0xLjEzMDQxMzYgLTIuMzI4ODYyMiAtMC45NTY0MzM5IC0xLjQyNzc4NjEgLTAuOTk1MzU5NSAtMS4xODE2OTM0XG4gWzEzXSAtMi4wODUxNDM5IC0wLjkwMTA1NDEgLTEuMDg3MzA5OSAtMS4wNDg5NTEzIC0wLjkyOTU5MzkgLTEuMTQ2OTI5NlxuIFsxOV0gLTEuMTY5Mzg4NiAtMS4zNzg2NDY3IC0wLjkyMTc4MjAgLTEuMjkwNjAyNyAtMS4wMTIzMjU4IC0wLjkyMzg3MzhcbiBbMjVdIC0yLjg0MDI3MzUgLTEuMTM3Njg2OSAtMC45ODAzMDE1IC0wLjkxODMxMjEgLTEuMzU5OTgzMSAtMC45MTI3MDIzXG4gWzMxXSAtMi4yMDU3Mzk4IC0xLjA1MzQ2NjUgLTAuOTIyNzYwNSAtMC45NDI5MzgwIC0yLjgzMjEwODAgLTEuNzU2OTk0MVxuIFszN10gLTEuODM3OTE1OCAtMS4yNzIxNjMwIC0zLjAwODk1NTUgLTEuODg2NDc5MSAtMS4yMTQyOTk4IC0wLjkxNTk0MTZcbiBbNDNdIC0yLjE2NzYzMDAgLTEuODE1OTY5OCAtMS45OTg2NzI1IC0xLjAzNjMzNTcgLTEuOTE0Mzg3NiAtMS4yMTExNjUzXG4gWzQ5XSAtMy41NzIwNTI1IC0xLjY1MTA3MDQgLTEuMzMxOTk2NSAtMS4zMDAwNzEyIC0wLjk5ODM4NDcgLTEuMjc3MTk0NFxuIFs1NV0gLTAuOTAwNzkxNCAtMC45MTY2NzI4IC0xLjA5NDk1MzggLTAuOTMxNDE4NSAtMS41MjM5NjMwIC0wLjkzNTk3ODVcbiBbNjFdIC0xLjYzMTc2OTAgLTEuNDA2MDQwMyAtMS42MzUyNzMyIC02LjYzNzc5NDkgLTAuOTgyMDYxMyAtMC45OTE2NDY0XG4gWzY3XSAtMS4yMDg0MTQ5IC0wLjk3NjA0OTUgLTEuMTQwNDEzNiAtMS4xMDE3NjQyIC0wLjkxMjI4ODEgLTAuOTM1OTc0OFxuIFs3M10gLTAuOTEyMzk1NyAtMy40NTAzNDA4IC0xLjE0NjY5NzcgLTEuMzcyNDQ5NCAtMC45MDg2Nzk5IC0wLjk3MzcxNDZcbiBbNzldIC0xLjA1ODc0MDYgLTAuOTcwNDcwMCAtMS4zOTAxMjM5IC0xLjkxNzk0MjUgLTAuOTM5MjEwOSAtMS4xODM0MjIwXG4gWzg1XSAtMC45MTE3MjE2IC0wLjkwMzE1MzkgLTEuNzYxODE0NCAtMC45MjM1OTU3IC0xLjI3Mjk1NzMgLTAuOTY1OTk1MlxuIFs5MV0gLTAuOTc2ODQzNyAtMC45MjA2OTk4IC0wLjkyMjg3MTMgLTEuMjY2NDk0NiAtMS41OTMyNTgxIC0zLjE2NjM0NjZcbiBbOTddIC0xLjI4MjkyMTUgLTEuNTE1NjM5MiAtMS4wNDUxNjY0IC0xLjU5NjI3MDRcbiJ9 -->
+<pre><code>  [1] -1.1191479 -0.9637234 -0.9143934 -0.9307934 -1.2767388 -0.9271324
+  [7] -1.1304136 -2.3288622 -0.9564339 -1.4277861 -0.9953595 -1.1816934
+ [13] -2.0851439 -0.9010541 -1.0873099 -1.0489513 -0.9295939 -1.1469296
+ [19] -1.1693886 -1.3786467 -0.9217820 -1.2906027 -1.0123258 -0.9238738
+ [25] -2.8402735 -1.1376869 -0.9803015 -0.9183121 -1.3599831 -0.9127023
+ [31] -2.2057398 -1.0534665 -0.9227605 -0.9429380 -2.8321080 -1.7569941
+ [37] -1.8379158 -1.2721630 -3.0089555 -1.8864791 -1.2142998 -0.9159416
+ [43] -2.1676300 -1.8159698 -1.9986725 -1.0363357 -1.9143876 -1.2111653
+ [49] -3.5720525 -1.6510704 -1.3319965 -1.3000712 -0.9983847 -1.2771944
+ [55] -0.9007914 -0.9166728 -1.0949538 -0.9314185 -1.5239630 -0.9359785
+ [61] -1.6317690 -1.4060403 -1.6352732 -6.6377949 -0.9820613 -0.9916464
+ [67] -1.2084149 -0.9760495 -1.1404136 -1.1017642 -0.9122881 -0.9359748
+ [73] -0.9123957 -3.4503408 -1.1466977 -1.3724494 -0.9086799 -0.9737146
+ [79] -1.0587406 -0.9704700 -1.3901239 -1.9179425 -0.9392109 -1.1834220
+ [85] -0.9117216 -0.9031539 -1.7618144 -0.9235957 -1.2729573 -0.9659952
+ [91] -0.9768437 -0.9206998 -0.9228713 -1.2664946 -1.5932581 -3.1663466
+ [97] -1.2829215 -1.5156392 -1.0451664 -1.5962704</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="p_waic" class="section level4">
+<h4><span class="math inline">\(p_{WAIC}\)</span></h4>
+<p><span class="math display">\[
+p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
+\]</span></p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHdhaWMgPC0gYXBwbHkobG9nKHRtcCksIDIsIHZhcikpXG5cbmBgYCJ9 -->
+<pre class="r"><code>pwaic &lt;- apply(log(tmp), 2, var))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiIOOCqOODqeODvDogIOS6iOaDs+WkluOBriAnKScg44Gn44GZICBpbiBcInB3YWljIDwtIGFwcGx5KGxvZyh0bXApLCAyLCB2YXIpKVwiXG4ifQ== -->
+<pre><code> エラー:  予想外の ')' です  in &quot;pwaic &lt;- apply(log(tmp), 2, var))&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="waic-1" class="section level4">
+<h4>WAIC</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZml0XzAyIDwtIG1hcChcbiAgIGFsaXN0KFxuICAgICAgWSB+IGRub3JtKGIwICsgYjEgKiBYLCBsb2dfdmFyX2VyciksXG4gICAgICBiMCB+IGR1bmlmKC0xMDAsIDEwMCksXG4gICAgICBiMSB+IGR1bmlmKC01LCA1KSxcbiAgICAgIGxvZ192YXJfZXJyIH4gZHVuaWYoMCwgMTAwKVxuICAgKSwgZGF0YSA9IEQpXG5cbmBgYCJ9 -->
+<pre class="r"><code>fit_02 &lt;- map(
+   alist(
+      Y ~ dnorm(b0 + b1 * X, log_var_err),
+      b0 ~ dunif(-100, 100),
+      b1 ~ dunif(-5, 5),
+      log_var_err ~ dunif(0, 100)
+   ), data = D)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiIG1hcChhbGlzdChZIH4gZG5vcm0oYjAgKyBiMSAqIFgsIGxvZ192YXJfZXJyKSwgYjAgfiBkdW5pZigtMTAwLCAg44Gn44Ko44Op44O8OiBcbiAgbm9uLWZpbml0ZSBmaW5pdGUtZGlmZmVyZW5jZSB2YWx1ZSBbMl1cblN0YXJ0IHZhbHVlcyBmb3IgcGFyYW1ldGVycyBtYXkgYmUgdG9vIGZhciBmcm9tIE1BUC5cblRyeSBiZXR0ZXIgcHJpb3JzIG9yIHVzZSBleHBsaWNpdCBzdGFydCB2YWx1ZXMuXG5JZiB5b3Ugc2FtcGxlZCByYW5kb20gc3RhcnQgdmFsdWVzLCBqdXN0IHRyeWluZyBhZ2FpbiBtYXkgd29yay5cblN0YXJ0IHZhbHVlcyB1c2VkIGluIHRoaXMgYXR0ZW1wdDpcbmIwID0gLTUyLjI1NDc5NDYzMTE1MzNcbmIxID0gNC42MjM1ODkzNjQzNDYxMlxubG9nX3Zhcl9lcnIgPSA2MC4xMzY1NzI1OTc1NDg0XG4ifQ== -->
+<pre><code> map(alist(Y ~ dnorm(b0 + b1 * X, log_var_err), b0 ~ dunif(-100,  でエラー: 
+  non-finite finite-difference value [2]
+Start values for parameters may be too far from MAP.
+Try better priors or use explicit start values.
+If you sampled random start values, just trying again may work.
+Start values used in this attempt:
+b0 = -52.2547946311533
+b1 = 4.62358936434612
+log_var_err = 60.1365725975484</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuV0FJQyhmaXRfMDIpXG5cbmBgYCJ9 -->
+<pre class="r"><code>WAIC(fit_02)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQ29uc3RydWN0aW5nIHBvc3RlcmlvciBwcmVkaWN0aW9uc1xuIn0= -->
+<pre><code>Constructing posterior predictions</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWyAxMDAgLyAxMDAwIF1cblsgMjAwIC8gMTAwMCBdXG5bIDMwMCAvIDEwMDAgXVxuWyA0MDAgLyAxMDAwIF1cblsgNTAwIC8gMTAwMCBdXG5bIDYwMCAvIDEwMDAgXVxuWyA3MDAgLyAxMDAwIF1cblsgODAwIC8gMTAwMCBdXG5bIDkwMCAvIDEwMDAgXVxuWyAxMDAwIC8gMTAwMCBdXG5cblsxXSAyODIuNjE2OVxuYXR0cigsXCJscHBkXCIpXG5bMV0gLTEzNy44MzExXG5hdHRyKCxcInBXQUlDXCIpXG5bMV0gMy40NzcyOTZcbmF0dHIoLFwic2VcIilcblsxXSAxNy4xOTgwM1xuIn0= -->
+<pre><code>[ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]
+
+[1] 282.6169
+attr(,&quot;lppd&quot;)
+[1] -137.8311
+attr(,&quot;pWAIC&quot;)
+[1] 3.477296
+attr(,&quot;se&quot;)
+[1] 17.19803</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2F0KFwiV0FJQzpcIiwgV0FJQywgXCJcXG5cIilcblxuYGBgIn0= -->
+<pre class="r"><code>cat(&quot;WAIC:&quot;, WAIC, &quot;\n&quot;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV0FJQzogMjcyLjQ5ODcgXG4ifQ== -->
+<pre><code>WAIC: 272.4987 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2F0KFwibHBwZDpcIiwgbHBwZCwgXCJcXG5cIilcbmBgYCJ9 -->
+<pre class="r"><code>cat(&quot;lppd:&quot;, lppd, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoibHBwZDogLTEzOS40MzUyIFxuIn0= -->
+<pre><code>lppd: -139.4352 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2F0KFwicHdhaWM6XCIsIHB3YWljLCBcIlxcblwiKVxuYGBgIn0= -->
+<pre class="r"><code>cat(&quot;pwaic:&quot;, pwaic, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicHdhaWM6IDMuMTg1ODc3IFxuIn0= -->
+<pre><code>pwaic: 3.185877 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+</div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiV0FJQ+OBruWLieW8t+eUqOODjuODvOODiOODluODg+OCryIKb3V0cHV0OiBodG1sX25vdGVib29rCmF1dGhvcjogWS5OYWthaGFzaGkKLS0tCgojIyMgV0FJQ+OBruWumue+qQpXQUlDKDxpPldpZGVseSBBcHBsaWNhYmxlIEluZm9ybWF0aW9uIENyaXRlcmlvbjwvaT4p44Gv5Lul5LiL44Gu44KI44GG44Gr5a6a576p44GV44KM44KL77yaCiQkCldBSUMgPSAtMihscHBkIC0gcF97V0FJQ30pCiQkCuOBk+OBk+OBpwokJApscHBkID0gXHN1bV97aSA9IDF9XntOfVxsb2d7UHIoeV97aX0pfQokJArjgafjgYLjgorjgIHjgb7jgZ8KJCQKcF97V0FJQ30gPSBcc3VtX3tpID0gMX1ee059Vih5X3tpfSkKJCQK44Gn44GC44KL44CCCiRQcih5X3tpfSkk44GK44KI44GzJFYoeV97aX0pJOOBr+OBneOCjOOBnuOCjOims+a4rOWApGnjga7kuovlvozliIbluIPjgYvjgonlvpfjgonjgozjgosKPGI+5bmz5Z2H5bCk5bqmPC9iPuOBiuOCiOOBszxiPuWvvuaVsOWwpOW6puOBruWIhuaVozwvYj7jgpLooajjgZnjgoLjga7jgajjgZnjgovjgIIKCiMjIyDjgrfjg5/jg6Xjg6zjg7zjgrfjg6fjg7MK5YuJ5by344Gu44Gf44KB44Gr44CB57Ch5Y2Y44Gq5pWw5YCk5L6L44KS55m655Sf44GV44Gb44Gm44Gd44GuV0FJQ+OCkuioiOeul+OBmeOCi+OAggrjg5Hjg6njg6Hjg7zjgr/jga7mjqjlrprjgYrjgojjgbNNQ01D44K144Oz44OX44Oq44Oz44Kw44Gr44Gvc3RhbuOCkuWIqeeUqOOBmeOCi+OAggoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpgYGAKYGBge3J9CiMg44K344Of44Ol44Os44O844K344On44Oz44OH44O844K/44Gu55m655SfCnNldC5zZWVkKDEyMykKTiA8LSAxMDAgIyDjgrXjg7Pjg5fjg6vjgrXjgqTjgroKYiA8LSAxLjIgIyDlm57luLDkv4LmlbAKWCA8LSBybm9ybShOLCAwLCAxKSAjIOiqrOaYjuWkieaVsApFIDwtIHJub3JtKE4sIDMsIDEpICMg6Kqk5beu5YiG5pWjClkgPC0gYiAqIFggKyBFCkQgPC0gZGF0YS5mcmFtZShZLCBYKSAjIOODh+ODvOOCv+ODleODrOODvOODoAprbml0cjo6a2FibGUoaGVhZChEKSkKYGBgCgrjgZPjga7jg4fjg7zjgr/jgavlr77jgZfjgaZ7cnN0YW5944Gr44KI44KL57ea5b2i5Zue5biw44Oi44OH44Or44KS5b2T44Gm44Gv44KB44KLCgpgYGB7cn0KbGlicmFyeShyc3RhbikKcnN0YW5fb3B0aW9ucyhhdXRvX3dyaXRlID0gVFJVRSkKb3B0aW9ucyhtYy5jb3JlcyA9IHBhcmFsbGVsOjpkZXRlY3RDb3JlcygpKQpgYGAKCmBgYHtyfQoKYGBgCgoKCgoKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiV0FJQ+OBruWLieW8t+eUqOODjuODvOODiOODluODg+OCryIKb3V0cHV0OiBodG1sX25vdGVib29rCmF1dGhvcjogWS5OYWthaGFzaGkKLS0tCgojIyMgV0FJQ+OBruWumue+qQpXQUlDKDxpPldpZGVseSBBcHBsaWNhYmxlIEluZm9ybWF0aW9uIENyaXRlcmlvbjwvaT4p44Gv5Lul5LiL44Gu44KI44GG44Gr5a6a576p44GV44KM44KL77yaCiQkCldBSUMgPSAtMihscHBkIC0gcF97V0FJQ30pCiQkCuOBk+OBk+OBpwokJApscHBkID0gXHN1bV97aSA9IDF9XntOfVxsb2d7UHIoeV97aX0pfQokJArjgafjgYLjgorjgIHjgb7jgZ8KJCQKcF97V0FJQ30gPSBcc3VtX3tpID0gMX1ee059Vih5X3tpfSkKJCQK44Gn44GC44KL44CCCiRQcih5X3tpfSkk44GK44KI44GzJFYoeV97aX0pJOOBr+OBneOCjOOBnuOCjOims+a4rOWApGnjga7kuovlvozliIbluIPjgYvjgonlvpfjgonjgozjgosKPGI+5bmz5Z2H5a++5pWw5bCk5bqmPC9iPuOBiuOCiOOBszxiPuWvvuaVsOWwpOW6puOBruWIhuaVozwvYj7jgpLooajjgZnjgoLjga7jgajjgZnjgovjgIIKCiMjIyDjgrfjg5/jg6Xjg6zjg7zjgrfjg6fjg7MK5YuJ5by344Gu44Gf44KB44Gr44CB57Ch5Y2Y44Gq5pWw5YCk5L6L44KS55m655Sf44GV44Gb44Gm44Gd44GuV0FJQ+OCkuioiOeul+OBmeOCi+OAggrjg5Hjg6njg6Hjg7zjgr/jga7mjqjlrprjgYrjgojjgbNNQ01D44K144Oz44OX44Oq44Oz44Kw44Gr44Gvc3RhbuOCkuWIqeeUqOOBmeOCi+OAggoKYGBge3J9CndvcmtfZGlyIDwtICIvVXNlcnMvbmFrYWhhc2hpL0Rlc2t0b3AvR2l0VGVzdC9TdGF0aXN0aWNhbFJldGhpbmtpbmciCnNldHdkKHdvcmtfZGlyKQpsaWJyYXJ5KHRpZHl2ZXJzZSkKYGBgCgpgYGB7cn0KIyDjgrfjg5/jg6Xjg6zjg7zjgrfjg6fjg7Pjg4fjg7zjgr/jga7nmbrnlJ8Kc2V0LnNlZWQoMTIzKQpOIDwtIDEwMCAjIOOCteODs+ODl+ODq+OCteOCpOOCugpiIDwtIDEuMiAjIOWbnuW4sOS/guaVsApYIDwtIHJub3JtKE4sIDAsIDEpICMg6Kqs5piO5aSJ5pWwCkUgPC0gcm5vcm0oTiwgMywgMSkgIyDoqqTlt67liIbmlaMKWSA8LSBiICogWCArIEUKRCA8LSBkYXRhLmZyYW1lKFksIFgpICMg44OH44O844K/44OV44Os44O844OgCmtuaXRyOjprYWJsZShoZWFkKEQpKQpgYGAKCuOBk+OBruODh+ODvOOCv+OBq+WvvuOBl+OBpntyc3Rhbn3jgavjgojjgovnt5rlvaLlm57luLDjg6Ljg4fjg6vjgpLlvZPjgabjga/jgoHjgosKCmBgYHtyfQpsaWJyYXJ5KHJzdGFuKQpyc3Rhbl9vcHRpb25zKGF1dG9fd3JpdGUgPSBUUlVFKQpvcHRpb25zKG1jLmNvcmVzID0gcGFyYWxsZWw6OmRldGVjdENvcmVzKCkpCmBgYAoKYGBge3J9CmRhdF9zdGFuIDwtIGxpc3QoCiAgIE4gPSBOLAogICBYID0gRCRYLAogICBZID0gRCRZCikKYGBgCgpgYGB7cn0KZml0XzAxIDwtIHN0YW4oZmlsZSA9ICcuL1dBSUMuc3RhbicsIAogICAgICAgICAgICAgICBkYXRhID0gZGF0X3N0YW4sIAogICAgICAgICAgICAgICBpdGVyID0gMzAwMCwKICAgICAgICAgICAgICAgY2hhaW5zID0gNCwKICAgICAgICAgICAgICAgc2VlZCA9IDEyMzQpCmBgYAoKYGBge3J9CnN1bW1hcnkoZml0XzAxKSRzdW1tYXJ5CmBgYAoKYGBge3J9CnN1bW1hcnkoZml0XzAxKSRzdW1tYXJ5WyJiMSIsIGMoIm1lYW4iLCAiNTAlIildCmV4cChzdW1tYXJ5KGZpdF8wMSkkc3VtbWFyeVsibG9nX3Zhcl9lcnIiLCBjKCJtZWFuIiwgIjUwJSIpXSkKYGBgCgoKIyMjIFdBSUPjga7oqIjnrpcKIyMjIyBscHBkCmxwcGTjga/liY3ov7DjgZfjgZ/pgJrjgorku6XkuIvjgavjgojjgaPjgaboqIjnrpfjgZXjgozjgovvvJoKJCQKbHBwZCA9IFxzdW1fe2kgPSAxfV57Tn1cbG9ne1ByKHlfe2l9KX0KJCQKCnN0YW7jga7ntZDmnpzjgYvjgolwb3N0ZXJpb3Igc2FtcGxl44KS5b6X44KL44CCCndhcm11cOOCkueJueOBq+aMh+WumuOBl+OBpuOBhOOBquOBhOOBn+OCgXNhbXBsZeOCteOCpOOCuu+8iGl0Ze+8ieOBruWNiuWIhuOBjOWIh+OCiuaNqOOBpuOCieOCjOOBn+e1kOaenOOAgQo2LDAwMOOCteODs+ODl+ODq+OBjOS/neWtmOOBleOCjOOCi+OAggoKYGBge3J9CnBvc3Rfc2FtcGxlcyA8LSBleHRyYWN0KGZpdF8wMSkKc3RyKHBvc3Rfc2FtcGxlcykKYGBgCgoK44GT44GuNjAwMOOCteODs+ODl+ODq+OCkuODkeODqeODoeODvOOCv+OBqOOBl+OBpuS4juOBiOOBn+aZguOBruWQhCR5X3tpfSTjga7lr77mlbDlsKTluqbjgpLmsYLjgoHjgovvvJoKCmBgYHtyfQpEZXMgPC0gY2JpbmQoMSwgWCkKQiAgIDwtIGNiaW5kKHBvc3Rfc2FtcGxlcyRiMCwgcG9zdF9zYW1wbGVzJGIxKQp0bXAgPC0gbWF0cml4KE5BLCBsZW5ndGgocG9zdF9zYW1wbGVzJGIwKSwgTikKZm9yIChpIGluIDE6TikgewogICB0bXBbLCBpXSA8LSBkbm9ybShZW2ldLCBtZWFuID0gQiAlKiUgRGVzW2ksIF0sIAogICAgICAgICAgICAgICAgICAgICBzZCA9IGV4cChwb3N0X3NhbXBsZXMkbG9nX3Zhcl9lcnIpKQp9CmxwcGQgPC0gc3VtKGNvbE1lYW5zKGxvZyh0bXApKSkKYGBgCgojIyMjICRwX3tXQUlDfSQKJCQKcF97V0FJQ30gPSBcc3VtX3tpID0gMX1ee059Vih5X3tpfSkKJCQKCmBgYHtyfQpwd2FpYyA8LSBzdW0oYXBwbHkobG9nKHRtcCksIDIsIHZhcikpCmBgYAoKIyMjIyBXQUlDCmBgYHtyfQpXQUlDIDwtIC0yICogKGxwcGQgKyBwd2FpYykKYGBgCgpgYGB7cn0KbGlicmFyeShyZXRoaW5raW5nKQpmaXRfMDIgPC0gbWFwKAogICBhbGlzdCgKICAgICAgWSB+IGRub3JtKGIwICsgYjEgKiBYLCBsb2dfdmFyX2VyciksCiAgICAgIGIwIH4gZHVuaWYoLTEwLCAxMCksCiAgICAgIGIxIH4gZHVuaWYoLTUsIDUpLAogICAgICBsb2dfdmFyX2VyciB+IGR1bmlmKDAsIDEwKQogICApLCBkYXRhID0gRCkKYGBgCgpgYGB7cn0KV0FJQyhmaXRfMDIpCmBgYAoKYGBge3J9CmNhdCgiV0FJQzoiLCBXQUlDLCAiXG4iKQpjYXQoImxwcGQ6IiwgbHBwZCwgIlxuIikKY2F0KCJwd2FpYzoiLCBwd2FpYywgIlxuIikKYGBgCgoKCgoK</div>
 
 
 
