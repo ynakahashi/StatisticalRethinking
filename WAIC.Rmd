@@ -1,0 +1,59 @@
+---
+title: "WAICの勉強用ノートブック"
+output: html_notebook
+author: Y.Nakahashi
+---
+
+### WAICの定義
+WAIC(<i>Widely Applicable Information Criterion</i>)は以下のように定義される：
+$$
+WAIC = -2(lppd - p_{WAIC})
+$$
+ここで
+$$
+lppd = \sum_{i = 1}^{N}\log{Pr(y_{i})}
+$$
+であり、また
+$$
+p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
+$$
+である。
+$Pr(y_{i})$および$V(y_{i})$はそれぞれ観測値iの事後分布から得られる
+<b>平均尤度</b>および<b>対数尤度の分散</b>を表すものとする。
+
+### シミュレーション
+勉強のために、簡単な数値例を発生させてそのWAICを計算する。
+パラメータの推定およびMCMCサンプリングにはstanを利用する。
+
+```{r}
+library(tidyverse)
+```
+```{r}
+# シミュレーションデータの発生
+set.seed(123)
+N <- 100 # サンプルサイズ
+b <- 1.2 # 回帰係数
+X <- rnorm(N, 0, 1) # 説明変数
+E <- rnorm(N, 3, 1) # 誤差分散
+Y <- b * X + E
+D <- data.frame(Y, X) # データフレーム
+knitr::kable(head(D))
+```
+
+このデータに対して{rstan}による線形回帰モデルを当てはめる
+
+```{r}
+library(rstan)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+```
+
+```{r}
+
+```
+
+
+
+
+
+
