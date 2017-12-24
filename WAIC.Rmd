@@ -37,10 +37,11 @@ set.seed(123)
 N <- 100 # サンプルサイズ
 b <- 1.2 # 回帰係数
 X <- rnorm(N, 0, 1) # 説明変数
-E <- rnorm(N, 3, 2) # 誤差項
+E <- rnorm(N, 0, 2) # 誤差項
 Y <- b * X + E
 D <- data.frame(Y, X) # データフレーム
 knitr::kable(head(D))
+formattable(D)
 ```
 
 このデータに対して{rstan}による線形回帰モデルを当てはめる
@@ -102,9 +103,9 @@ B   <- cbind(post_samples$b0, post_samples$b1)
 tmp <- matrix(NA, length(post_samples$b0), N)
 for (i in 1:N) {
    tmp[, i] <- dnorm(Y[i], mean = B %*% Des[i, ], 
-                     sd = post_samples$sigma, log = TRUE)
+                     sd = post_samples$sigma)
 }
-lppd <- sum(log(colSums(exp(tmp)) / N_sample))
+lppd <- sum(log(colMeans(tmp)))
 ```
 
 
@@ -114,7 +115,7 @@ p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
 $$
 
 ```{r}
-pwaic <- sum(apply(tmp, 2, var))
+pwaic <- sum(apply(log(tmp), 2, var))
 ```
 
 #### WAIC
@@ -142,6 +143,14 @@ cat("WAIC:", WAIC, "\n")
 cat("lppd:", lppd, "\n")
 cat("pwaic:", pwaic, "\n")
 ```
+
+```{r}
+cat("WAIC:", WAIC, "\n",
+    "lppd:", lppd, "\n",
+    "pwaic:", pwaic, "\n")
+```
+
+
 
 
 ```{r}
@@ -220,8 +229,14 @@ WAIC_03 <- waic(tmp02)
 ```
 
 ```{r}
-cat("WAIC by loo:", WAIC_03$waic, "\n")
-cat("WAIC by manual:", WAIC_02, "\n")
+cat("WAIC by loo:", WAIC_03$waic, "\n",
+    "WAIC by manual:", WAIC, "\n")
+```
+
+
+```{r}
+cat("pwaic by loo:", WAIC_03$p_waic, "\n",
+    "pwaic by manual:", pwaic, "\n")
 ```
 
 
