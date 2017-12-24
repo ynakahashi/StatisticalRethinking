@@ -37,7 +37,7 @@ set.seed(123)
 N <- 100 # サンプルサイズ
 b <- 1.2 # 回帰係数
 X <- rnorm(N, 0, 1) # 説明変数
-E <- rnorm(N, 3, 1) # 誤差分散
+E <- rnorm(N, 3, 2) # 誤差項
 Y <- b * X + E
 D <- data.frame(Y, X) # データフレーム
 knitr::kable(head(D))
@@ -49,6 +49,7 @@ knitr::kable(head(D))
 library(rstan)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
+library(shinystan)
 ```
 
 ```{r}
@@ -72,8 +73,7 @@ summary(fit_01)$summary
 ```
 
 ```{r}
-summary(fit_01)$summary["b1", c("mean", "50%")]
-exp(summary(fit_01)$summary["log_var_err", c("mean", "50%")])
+summary(fit_01)$summary[c("b1", "sigma"), c("mean", "50%")]
 ```
 
 
@@ -102,10 +102,11 @@ B   <- cbind(post_samples$b0, post_samples$b1)
 tmp <- matrix(NA, length(post_samples$b0), N)
 for (i in 1:N) {
    tmp[, i] <- dnorm(Y[i], mean = B %*% Des[i, ], 
-                     sd = exp(post_samples$log_var_err))
+                     sd = post_samples$sigma, log = TRUE)
 }
-lppd <- sum(colMeans(log(tmp)))
+lppd <- sum(log(colSums(exp(tmp)) / N_sample))
 ```
+
 
 #### $p_{WAIC}$
 $$
@@ -113,22 +114,22 @@ p_{WAIC} = \sum_{i = 1}^{N}V(y_{i})
 $$
 
 ```{r}
-pwaic <- sum(apply(log(tmp), 2, var))
+pwaic <- sum(apply(tmp, 2, var))
 ```
 
 #### WAIC
 ```{r}
-WAIC <- -2 * (lppd + pwaic)
+WAIC <- -2 * (lppd - pwaic)
 ```
 
 ```{r}
 library(rethinking)
 fit_02 <- map(
    alist(
-      Y ~ dnorm(b0 + b1 * X, log_var_err),
+      Y ~ dnorm(b0 + b1 * X, sigma),
       b0 ~ dunif(-10, 10),
       b1 ~ dunif(-5, 5),
-      log_var_err ~ dunif(0, 10)
+      sigma ~ dunif(0, 10)
    ), data = D)
 ```
 
@@ -148,5 +149,79 @@ fit_03 <- lm(Y ~ X, D)
 AIC(fit_03)
 ```
 
+
+```{r}
+N_sample <- 6000
+ll_mat <- sapply(1:N_sample, 
+                 function(i) {
+                    mu <- post_samples$b0[i] + post_samples$b1[i] * D$X  
+                    dnorm(D$Y, mu, post_samples$sigma[i], log = TRUE)}
+                 )
+lppd_re <- sapply(1:N, 
+                  function(i) {
+                     log_sum_exp(ll_mat[i, ]) - log(N_sample)
+                  })
+pwaic_re <- sapply(1:N, 
+                  function(i) {
+                     var(ll_mat[i, ])
+                  })
+WAIC_re <- -2 * (sum(lppd_re) - sum(pwaic_re))
+cat("WAIC:", WAIC_re, "\n")
+cat("lppd:", sum(lppd_re), "\n")
+cat("pwaic:", sum(pwaic), "\n")
+```
+
+
+
+#### パッケージlooを使ってWAICを求める。
+計算により求めたい数値をパッケージで得た値と比較する。
+WAICの計算には{loo}を用いる。
+
+```{r}
+library(loo)
+```
+
+looによりWAICを計算させるために、stanのスクリプトにgenerated quantitiesブロックを
+追加する。
+
+```{stan}
+generated quantities {
+   vector[N] log_lik;
+   
+   for (n in 1:N)
+      log_lik[n] = normal_lpdf(Y[n] | b0 + b1 * X[n], exp(sigma));
+}
+```
+
+
+
+```{r}
+fit_04 <- stan(file = './WAIC_02.stan', 
+               data = dat_stan, 
+               iter = 3000,
+               chains = 4,
+               seed = 1234)
+```
+
+
+```{r}
+summary(fit_04)$summary[c("b1", "sigma"), c("mean", "50%")]
+```
+
+```{r}
+tmp02    <- extract_log_lik(fit_04)
+lppd_02  <- sum(log(colSums(exp(tmp02)) / N_sample))
+pwaic_02 <- sum(apply(tmp02, 2, var))
+WAIC_02  <- -2 * (lppd_02 - pwaic_02)
+```
+
+```{r}
+WAIC_03 <- waic(tmp02)
+```
+
+```{r}
+cat("WAIC by loo:", WAIC_03$waic, "\n")
+cat("WAIC by manual:", WAIC_02, "\n")
+```
 
 
