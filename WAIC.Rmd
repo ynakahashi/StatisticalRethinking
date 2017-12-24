@@ -143,6 +143,10 @@ cat("pwaic:", pwaic, "\n")
 ```
 
 
+```{r}
+fit_03 <- lm(Y ~ X, D)
+AIC(fit_03)
+```
 
 
 
